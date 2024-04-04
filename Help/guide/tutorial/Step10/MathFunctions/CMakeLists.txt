@@ -1,10 +1,15 @@
 # add the library that runs
 add_library(MathFunctions MathFunctions.cxx)
 
+# Use GenerateExportHeader module to simplify DLL export
+include(GenerateExportHeader)
+generate_export_header(MathFunctions)
+
 # state that anybody linking to us needs to include the current source dir
 # to find MathFunctions.h, while we don't.
 target_include_directories(MathFunctions
                            INTERFACE ${CMAKE_CURRENT_SOURCE_DIR}
+				PUBLIC ${CMAKE_CURRENT_BINARY_DIR}
                            )
 
 # should we use our own math functions
@@ -36,10 +41,6 @@ if(USE_MYMATH)
 
   target_link_libraries(MathFunctions PRIVATE SqrtLibrary)
 endif()
-
-# define the symbol stating we are using the declspec(dllexport) when
-# building on windows
-target_compile_definitions(MathFunctions PRIVATE "EXPORTING_MYMATH")
 
 # link MathFunctions to tutorial_compiler_flags
 target_link_libraries(MathFunctions PUBLIC tutorial_compiler_flags)
